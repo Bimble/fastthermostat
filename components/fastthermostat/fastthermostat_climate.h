@@ -11,9 +11,9 @@
 #include <vector>
 
 namespace esphome {
-namespace thermostat {
+namespace fastthermostat {
 
-enum ThermostatClimateTimerIndex : size_t {
+enum FastThermostatClimateTimerIndex : size_t {
   TIMER_COOLING_MAX_RUN_TIME = 0,
   TIMER_COOLING_OFF = 1,
   TIMER_COOLING_ON = 2,
@@ -27,18 +27,18 @@ enum ThermostatClimateTimerIndex : size_t {
 };
 
 enum OnBootRestoreFrom : size_t { MEMORY = 0, DEFAULT_PRESET = 1 };
-struct ThermostatClimateTimer {
+struct FastThermostatClimateTimer {
   bool active;
   uint32_t time;
   uint32_t started;
   std::function<void()> func;
 };
 
-struct ThermostatClimateTargetTempConfig {
+struct FastThermostatClimateTargetTempConfig {
  public:
-  ThermostatClimateTargetTempConfig();
-  ThermostatClimateTargetTempConfig(float default_temperature);
-  ThermostatClimateTargetTempConfig(float default_temperature_low, float default_temperature_high);
+  FastThermostatClimateTargetTempConfig();
+  FastThermostatClimateTargetTempConfig(float default_temperature);
+  FastThermostatClimateTargetTempConfig(float default_temperature_low, float default_temperature_high);
 
   void set_fan_mode(climate::ClimateFanMode fan_mode) { this->fan_mode_ = fan_mode; }
   void set_swing_mode(climate::ClimateSwingMode swing_mode) { this->swing_mode_ = swing_mode; }
@@ -56,16 +56,16 @@ struct ThermostatClimateTargetTempConfig {
   optional<climate::ClimateMode> mode_{};
 };
 
-class ThermostatClimate : public climate::Climate, public Component {
+class FastThermostatClimate : public climate::Climate, public Component {
  public:
-  ThermostatClimate();
+  FastThermostatClimate();
   void setup() override;
   void dump_config() override;
   void loop() override;
 
   void set_default_preset(const std::string &custom_preset);
   void set_default_preset(climate::ClimatePreset preset);
-  void set_on_boot_restore_from(thermostat::OnBootRestoreFrom on_boot_restore_from);
+  void set_on_boot_restore_from(fastthermostat::OnBootRestoreFrom on_boot_restore_from);
   void set_set_point_minimum_differential(float differential);
   void set_cool_deadband(float deadband);
   void set_cool_overrun(float overrun);
@@ -112,8 +112,8 @@ class ThermostatClimate : public climate::Climate, public Component {
   void set_supports_swing_mode_vertical(bool supports_swing_mode_vertical);
   void set_supports_two_points(bool supports_two_points);
 
-  void set_preset_config(climate::ClimatePreset preset, const ThermostatClimateTargetTempConfig &config);
-  void set_custom_preset_config(const std::string &name, const ThermostatClimateTargetTempConfig &config);
+  void set_preset_config(climate::ClimatePreset preset, const FastThermostatClimateTargetTempConfig &config);
+  void set_custom_preset_config(const std::string &name, const FastThermostatClimateTargetTempConfig &config);
 
   Trigger<> *get_cool_action_trigger() const;
   Trigger<> *get_supplemental_cool_action_trigger() const;
@@ -177,7 +177,7 @@ class ThermostatClimate : public climate::Climate, public Component {
   /// Applies the temperature, mode, fan, and swing modes of the provided config.
   /// This is agnostic of custom vs built in preset
   /// Returns true if something was changed
-  bool change_preset_internal_(const ThermostatClimateTargetTempConfig &config);
+  bool change_preset_internal_(const FastThermostatClimateTargetTempConfig &config);
 
   /// Return the traits of this controller.
   climate::ClimateTraits traits() override;
@@ -212,11 +212,11 @@ class ThermostatClimate : public climate::Climate, public Component {
   bool heating_action_ready_();
 
   /// Start/cancel/get status of climate action timer
-  void start_timer_(ThermostatClimateTimerIndex timer_index);
-  bool cancel_timer_(ThermostatClimateTimerIndex timer_index);
-  bool timer_active_(ThermostatClimateTimerIndex timer_index);
-  uint32_t timer_duration_(ThermostatClimateTimerIndex timer_index);
-  std::function<void()> timer_cbf_(ThermostatClimateTimerIndex timer_index);
+  void start_timer_(FastThermostatClimateTimerIndex timer_index);
+  bool cancel_timer_(FastThermostatClimateTimerIndex timer_index);
+  bool timer_active_(FastThermostatClimateTimerIndex timer_index);
+  uint32_t timer_duration_(FastThermostatClimateTimerIndex timer_index);
+  std::function<void()> timer_cbf_(FastThermostatClimateTimerIndex timer_index);
 
   /// set_timeout() callbacks for various actions (see above)
   void cooling_max_run_time_timer_callback_();
@@ -237,7 +237,7 @@ class ThermostatClimate : public climate::Climate, public Component {
   bool supplemental_cooling_required_();
   bool supplemental_heating_required_();
 
-  void dump_preset_config_(const char *preset_name, const ThermostatClimateTargetTempConfig &config,
+  void dump_preset_config_(const char *preset_name, const FastThermostatClimateTargetTempConfig &config,
                            bool is_default_preset);
 
   /// The sensor used for getting the current temperature
@@ -439,27 +439,27 @@ class ThermostatClimate : public climate::Climate, public Component {
   float supplemental_cool_delta_{0};
   float supplemental_heat_delta_{0};
 
-  /// Minimum allowable duration in seconds for action timers
-  const uint8_t min_timer_duration_{1};
+  /// Minimum allowable duration in milliseconds for action timers
+  const uint8_t min_timer_duration_{50};
 
   /// Climate action timers
-  std::vector<ThermostatClimateTimer> timer_{
-      {false, 0, 0, std::bind(&ThermostatClimate::cooling_max_run_time_timer_callback_, this)},
-      {false, 0, 0, std::bind(&ThermostatClimate::cooling_off_timer_callback_, this)},
-      {false, 0, 0, std::bind(&ThermostatClimate::cooling_on_timer_callback_, this)},
-      {false, 0, 0, std::bind(&ThermostatClimate::fan_mode_timer_callback_, this)},
-      {false, 0, 0, std::bind(&ThermostatClimate::fanning_off_timer_callback_, this)},
-      {false, 0, 0, std::bind(&ThermostatClimate::fanning_on_timer_callback_, this)},
-      {false, 0, 0, std::bind(&ThermostatClimate::heating_max_run_time_timer_callback_, this)},
-      {false, 0, 0, std::bind(&ThermostatClimate::heating_off_timer_callback_, this)},
-      {false, 0, 0, std::bind(&ThermostatClimate::heating_on_timer_callback_, this)},
-      {false, 0, 0, std::bind(&ThermostatClimate::idle_on_timer_callback_, this)},
+  std::vector<FastThermostatClimateTimer> timer_{
+      {false, 0, 0, std::bind(&FastThermostatClimate::cooling_max_run_time_timer_callback_, this)},
+      {false, 0, 0, std::bind(&FastThermostatClimate::cooling_off_timer_callback_, this)},
+      {false, 0, 0, std::bind(&FastThermostatClimate::cooling_on_timer_callback_, this)},
+      {false, 0, 0, std::bind(&FastThermostatClimate::fan_mode_timer_callback_, this)},
+      {false, 0, 0, std::bind(&FastThermostatClimate::fanning_off_timer_callback_, this)},
+      {false, 0, 0, std::bind(&FastThermostatClimate::fanning_on_timer_callback_, this)},
+      {false, 0, 0, std::bind(&FastThermostatClimate::heating_max_run_time_timer_callback_, this)},
+      {false, 0, 0, std::bind(&FastThermostatClimate::heating_off_timer_callback_, this)},
+      {false, 0, 0, std::bind(&FastThermostatClimate::heating_on_timer_callback_, this)},
+      {false, 0, 0, std::bind(&FastThermostatClimate::idle_on_timer_callback_, this)},
   };
 
   /// The set of standard preset configurations this thermostat supports (Eg. AWAY, ECO, etc)
-  std::map<climate::ClimatePreset, ThermostatClimateTargetTempConfig> preset_config_{};
+  std::map<climate::ClimatePreset, FastThermostatClimateTargetTempConfig> preset_config_{};
   /// The set of custom preset configurations this thermostat supports (eg. "My Custom Preset")
-  std::map<std::string, ThermostatClimateTargetTempConfig> custom_preset_config_{};
+  std::map<std::string, FastThermostatClimateTargetTempConfig> custom_preset_config_{};
 
   /// Default standard preset to use on start up
   climate::ClimatePreset default_preset_{};
@@ -468,8 +468,8 @@ class ThermostatClimate : public climate::Climate, public Component {
 
   /// If set to DEFAULT_PRESET then the default preset is always used. When MEMORY prior
   /// state will attempt to be restored if possible
-  thermostat::OnBootRestoreFrom on_boot_restore_from_{thermostat::OnBootRestoreFrom::MEMORY};
+  fastthermostat::OnBootRestoreFrom on_boot_restore_from_{fastthermostat::OnBootRestoreFrom::MEMORY};
 };
 
-}  // namespace thermostat
+}  // namespace fastthermostat
 }  // namespace esphome

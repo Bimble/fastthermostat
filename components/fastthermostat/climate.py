@@ -76,13 +76,13 @@ CONF_ON_BOOT_RESTORE_FROM = "on_boot_restore_from"
 
 CODEOWNERS = ["@kbx81"]
 
-climate_ns = cg.esphome_ns.namespace("climate")
-thermostat_ns = cg.esphome_ns.namespace("thermostat")
+climate_ns = cg.esphome_ns.namespace("fastclimate")
+thermostat_ns = cg.esphome_ns.namespace("fastthermostat")
 ThermostatClimate = thermostat_ns.class_(
-    "ThermostatClimate", climate.Climate, cg.Component
+    "FastThermostatClimate", climate.Climate, cg.Component
 )
 ThermostatClimateTargetTempConfig = thermostat_ns.struct(
-    "ThermostatClimateTargetTempConfig"
+    "FastThermostatClimateTargetTempConfig"
 )
 OnBootRestoreFrom = thermostat_ns.enum("OnBootRestoreFrom")
 ON_BOOT_RESTORE_FROM = {
