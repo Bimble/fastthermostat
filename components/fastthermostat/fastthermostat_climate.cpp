@@ -954,7 +954,7 @@ bool FastThermostatClimate::supplemental_heating_required_() {
           (this->supplemental_action_ == climate::CLIMATE_ACTION_HEATING));
 }
 
-void FastThermostatClimate::dump_preset_config_(const char *preset_name, const ThermostatClimateTargetTempConfig &config,
+void FastThermostatClimate::dump_preset_config_(const char *preset_name, const FastThermostatClimateTargetTempConfig &config,
                                             bool is_default_preset) {
   ESP_LOGCONFIG(TAG, "      %s Is Default: %s", preset_name, YESNO(is_default_preset));
 
@@ -1039,7 +1039,7 @@ void FastThermostatClimate::change_custom_preset_(const std::string &custom_pres
   }
 }
 
-bool FastThermostatClimate::change_preset_internal_(const ThermostatClimateTargetTempConfig &config) {
+bool FastThermostatClimate::change_preset_internal_(const FastThermostatClimateTargetTempConfig &config) {
   bool something_changed = false;
 
   if (this->supports_two_points_) {
@@ -1082,16 +1082,16 @@ bool FastThermostatClimate::change_preset_internal_(const ThermostatClimateTarge
 }
 
 void FastThermostatClimate::set_preset_config(climate::ClimatePreset preset,
-                                          const ThermostatClimateTargetTempConfig &config) {
+                                          const FastThermostatClimateTargetTempConfig &config) {
   this->preset_config_[preset] = config;
 }
 
 void FastThermostatClimate::set_custom_preset_config(const std::string &name,
-                                                 const ThermostatClimateTargetTempConfig &config) {
+                                                 const FastThermostatClimateTargetTempConfig &config) {
   this->custom_preset_config_[name] = config;
 }
 
-ThermostatClimate::ThermostatClimate()
+FastThermostatClimate::FastThermostatClimate()
     : cool_action_trigger_(new Trigger<>()),
       supplemental_cool_action_trigger_(new Trigger<>()),
       cool_mode_trigger_(new Trigger<>()),
@@ -1252,39 +1252,39 @@ void FastThermostatClimate::set_supports_two_points(bool supports_two_points) {
   this->supports_two_points_ = supports_two_points;
 }
 
-Trigger<> *ThermostatClimate::get_cool_action_trigger() const { return this->cool_action_trigger_; }
-Trigger<> *ThermostatClimate::get_supplemental_cool_action_trigger() const {
+Trigger<> *FastThermostatClimate::get_cool_action_trigger() const { return this->cool_action_trigger_; }
+Trigger<> *FastThermostatClimate::get_supplemental_cool_action_trigger() const {
   return this->supplemental_cool_action_trigger_;
 }
-Trigger<> *ThermostatClimate::get_dry_action_trigger() const { return this->dry_action_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_only_action_trigger() const { return this->fan_only_action_trigger_; }
-Trigger<> *ThermostatClimate::get_heat_action_trigger() const { return this->heat_action_trigger_; }
-Trigger<> *ThermostatClimate::get_supplemental_heat_action_trigger() const {
+Trigger<> *FastThermostatClimate::get_dry_action_trigger() const { return this->dry_action_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_only_action_trigger() const { return this->fan_only_action_trigger_; }
+Trigger<> *FastThermostatClimate::get_heat_action_trigger() const { return this->heat_action_trigger_; }
+Trigger<> *FastThermostatClimate::get_supplemental_heat_action_trigger() const {
   return this->supplemental_heat_action_trigger_;
 }
-Trigger<> *ThermostatClimate::get_idle_action_trigger() const { return this->idle_action_trigger_; }
-Trigger<> *ThermostatClimate::get_auto_mode_trigger() const { return this->auto_mode_trigger_; }
-Trigger<> *ThermostatClimate::get_cool_mode_trigger() const { return this->cool_mode_trigger_; }
-Trigger<> *ThermostatClimate::get_dry_mode_trigger() const { return this->dry_mode_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_only_mode_trigger() const { return this->fan_only_mode_trigger_; }
-Trigger<> *ThermostatClimate::get_heat_mode_trigger() const { return this->heat_mode_trigger_; }
-Trigger<> *ThermostatClimate::get_off_mode_trigger() const { return this->off_mode_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_mode_on_trigger() const { return this->fan_mode_on_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_mode_off_trigger() const { return this->fan_mode_off_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_mode_auto_trigger() const { return this->fan_mode_auto_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_mode_low_trigger() const { return this->fan_mode_low_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_mode_medium_trigger() const { return this->fan_mode_medium_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_mode_high_trigger() const { return this->fan_mode_high_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_mode_middle_trigger() const { return this->fan_mode_middle_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_mode_focus_trigger() const { return this->fan_mode_focus_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_mode_diffuse_trigger() const { return this->fan_mode_diffuse_trigger_; }
-Trigger<> *ThermostatClimate::get_fan_mode_quiet_trigger() const { return this->fan_mode_quiet_trigger_; }
-Trigger<> *ThermostatClimate::get_swing_mode_both_trigger() const { return this->swing_mode_both_trigger_; }
-Trigger<> *ThermostatClimate::get_swing_mode_off_trigger() const { return this->swing_mode_off_trigger_; }
-Trigger<> *ThermostatClimate::get_swing_mode_horizontal_trigger() const { return this->swing_mode_horizontal_trigger_; }
-Trigger<> *ThermostatClimate::get_swing_mode_vertical_trigger() const { return this->swing_mode_vertical_trigger_; }
-Trigger<> *ThermostatClimate::get_temperature_change_trigger() const { return this->temperature_change_trigger_; }
-Trigger<> *ThermostatClimate::get_preset_change_trigger() const { return this->preset_change_trigger_; }
+Trigger<> *FastThermostatClimate::get_idle_action_trigger() const { return this->idle_action_trigger_; }
+Trigger<> *FastThermostatClimate::get_auto_mode_trigger() const { return this->auto_mode_trigger_; }
+Trigger<> *FastThermostatClimate::get_cool_mode_trigger() const { return this->cool_mode_trigger_; }
+Trigger<> *FastThermostatClimate::get_dry_mode_trigger() const { return this->dry_mode_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_only_mode_trigger() const { return this->fan_only_mode_trigger_; }
+Trigger<> *FastThermostatClimate::get_heat_mode_trigger() const { return this->heat_mode_trigger_; }
+Trigger<> *FastThermostatClimate::get_off_mode_trigger() const { return this->off_mode_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_mode_on_trigger() const { return this->fan_mode_on_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_mode_off_trigger() const { return this->fan_mode_off_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_mode_auto_trigger() const { return this->fan_mode_auto_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_mode_low_trigger() const { return this->fan_mode_low_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_mode_medium_trigger() const { return this->fan_mode_medium_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_mode_high_trigger() const { return this->fan_mode_high_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_mode_middle_trigger() const { return this->fan_mode_middle_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_mode_focus_trigger() const { return this->fan_mode_focus_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_mode_diffuse_trigger() const { return this->fan_mode_diffuse_trigger_; }
+Trigger<> *FastThermostatClimate::get_fan_mode_quiet_trigger() const { return this->fan_mode_quiet_trigger_; }
+Trigger<> *FastThermostatClimate::get_swing_mode_both_trigger() const { return this->swing_mode_both_trigger_; }
+Trigger<> *FastThermostatClimate::get_swing_mode_off_trigger() const { return this->swing_mode_off_trigger_; }
+Trigger<> *FastThermostatClimate::get_swing_mode_horizontal_trigger() const { return this->swing_mode_horizontal_trigger_; }
+Trigger<> *FastThermostatClimate::get_swing_mode_vertical_trigger() const { return this->swing_mode_vertical_trigger_; }
+Trigger<> *FastThermostatClimate::get_temperature_change_trigger() const { return this->temperature_change_trigger_; }
+Trigger<> *FastThermostatClimate::get_preset_change_trigger() const { return this->preset_change_trigger_; }
 
 void FastThermostatClimate::dump_config() {
   LOG_CLIMATE("", "FastThermostat", this);
@@ -1385,12 +1385,12 @@ void FastThermostatClimate::dump_config() {
                 this->on_boot_restore_from_ == fastthermostat::DEFAULT_PRESET ? "DEFAULT_PRESET" : "MEMORY");
 }
 
-ThermostatClimateTargetTempConfig::ThermostatClimateTargetTempConfig() = default;
+FastThermostatClimateTargetTempConfig::FastThermostatClimateTargetTempConfig() = default;
 
-ThermostatClimateTargetTempConfig::ThermostatClimateTargetTempConfig(float default_temperature)
+FastThermostatClimateTargetTempConfig::FastThermostatClimateTargetTempConfig(float default_temperature)
     : default_temperature(default_temperature) {}
 
-ThermostatClimateTargetTempConfig::ThermostatClimateTargetTempConfig(float default_temperature_low,
+FastThermostatClimateTargetTempConfig::FastThermostatClimateTargetTempConfig(float default_temperature_low,
                                                                      float default_temperature_high)
     : default_temperature_low(default_temperature_low), default_temperature_high(default_temperature_high) {}
 

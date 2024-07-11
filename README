@@ -1,0 +1,7 @@
+# FastThermostat
+
+- Copy of https://github.com/esphome/esphome/tree/dev/esphome/components/thermostat
+- Dev branch at commit 7f83bcfdd91aba4fed05d0c1918c2899dac1682e
+- Renamed thermostat to fastthermostat
+- Configurable using milliseconds instead of seconds.
+
